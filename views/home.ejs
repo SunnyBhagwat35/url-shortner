@@ -6,6 +6,38 @@
     <title>Home Page</title>
 </head>
 <body>
-    <h1>Hey </h1>
+    <h1>URL Shortner</h1>
+    <form method="POST" action="/url">
+        <label>Enter Your URL to get it short</label>
+        <input type="text" name="url" placeholder="http://something.com">
+        <button type="submit">Generate</button>
+    </form>
+
+    <% if (locals.id) { %>
+     <p> URL Generated: http://localhost:8001/<%= id %></p>
+    <% } %>
+
+    <table>
+        <thead>
+            <th>S. no</th>
+            <th>ShortId</th>
+            <th>Redirects</th>
+            <th>Clicks</th>
+        </thead>
+        <tbody>
+            <% urls.forEach((url, index) => { %>
+                <tr>
+                    <td> <%= index + 1 %> </td>
+                <td> <%= url.ShortId %> </td>
+                <td> <%= url.redirectUrl %> </td>
+                <td> <%= url.visitHistory.length %> </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <table>
+        
+    </table>
 </body>
 </html>
