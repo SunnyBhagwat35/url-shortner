@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { getItem } from '../utils/Store.jsx'
 import { useNavigate } from 'react-router'
 
-function App() {
+function Dashboard() {
     const navigate = useNavigate()
     const [urls, setUrls] = useState([])
     const loadUrls = async () => {
@@ -39,33 +39,39 @@ function App() {
 
     return (
         <>
-            <section className="center h-screen flex flex-col">
+            <section className="center h-screen flex flex-col px-5 mx-5 my-5">
                 <h1 className='text-2xl'>Dashboard</h1>
                 <div className="urls ">
-                    <table className='border-collapse border border-gray-400'>
+                    <table className='w-screen border-collapse border border-gray-400'>
                         <thead>
                             <tr>
-                                <th className='text-start'>no.</th>
-                                <th className='text-start'>Url</th>
-                                <th className='text-start'>short link</th>
+                                <th className='text-start border border-gray-300 py-3 px-2'>no.</th>
+                                <th className='text-start border border-gray-300 py-3 px-2'>Url</th>
+                                <th className='text-start border border-gray-300 py-3 px-2'>short link</th>
                             </tr>
                         </thead>
                         <tbody>
                             {
                                 urls && urls.map((item, index) => (
-                                    <tr key={item._id} >
-                                        <td>{index + 1}</td>
-                                        <td>{item.redirectUrl}</td>
-                                        <td>{item.shortId}</td>
+                                    <tr key={item._id} className="">
+                                        <td className="border border-gray-300 py-3 px-2">{index + 1}</td>
+                                        <td className="border border-gray-300 py-3 px-2">{item.redirectUrl}</td>
+                                        <td className="border border-gray-300 py-3 px-2">
+                                            <a href={`http://127.0.0.1:8001/url/${item.shortId}`}
+                                                target="_blank" rel="noopener noreferrer"
+                                                className='bg-blue-200 hover:bg-blue-500 hover:text-white rounded py-1 px-2'>
+                                                Redirect
+                                            </a>
+                                        </td>
                                     </tr>
                                 ))
                             }
                         </tbody>
                     </table>
                 </div>
-            </section>
+            </section >
         </>
     )
 }
 
-export default App
+export default Dashboard
