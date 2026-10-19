@@ -1,39 +1,49 @@
 const { nanoid } = require('nanoid')
-const URL =  require('../models/url') 
+const URL = require('../models/url')
 
 async function handleGenerateNewShortUrl(req, res) {
     const body = req.body
     console.log(body)
-    if (!body.url){
-        return res.status(400).json({error: 'url is required'})
+    if (!body.url) {
+        return res.status(400).json({ error: 'url is required' })
     }
     const shortID = nanoid(8)
-    
+
     await URL.create({
         shortId: shortID,
-        redirectUrl:body.url,
+        redirectUrl: body.url,
         visitHistory: [],
         createdBy: req.user._id
     })
 
-    // return res.json({id: shortID})
-    return res.render(
-        'home',
-        {id: shortID}
-    )
+    return res.json({ id: shortID })
+    // return res.render(
+    //     'home',
+    //     {id: shortID}
+    // )
 }
 
 
-async function handleGetAnalytics(req, res){
+async function handleGetAnalytics(req, res) {
     const shortId = req.params.shortId
-    const entry = await URL.findOne({shortId})
+    const entry = await URL.findOne({ shortId })
     return res.json({
         total: entry.visitHistory.length,
         analytics: entry.visitHistory
     })
 }
 
+async function handleGetAllUrls(req, res) {
+    const userId = req.user._id
+    console.log(req.user)
+    const urls = await URL.find({ createdBy: userId })
+    return res.json({
+        urls: urls
+    })
+}
+
 module.exports = {
     handleGenerateNewShortUrl,
     handleGetAnalytics,
+    handleGetAllUrls,
 }

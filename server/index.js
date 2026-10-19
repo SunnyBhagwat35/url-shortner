@@ -1,9 +1,9 @@
 const express = require('express')
 const path = require('path')
 const cookieParser = require("cookie-parser")
-
-const {checkAuthenticaction, restrictTo} = require("./middlewares/auth")
-const {connectMongoDB} = require('./connect')
+const cors = require('cors')
+const { checkAuthenticaction, restrictTo } = require("./middlewares/auth")
+const { connectMongoDB } = require('./connect')
 const URL = require('./models/url')
 
 const urlRoute = require('./routes/url')
@@ -12,9 +12,11 @@ const userRoute = require('./routes/user')
 
 const app = express()
 const PORT = 8001
-
+var corsOptions = {
+    origin: 'http://localhost:5173'
+}
 connectMongoDB('mongodb://127.0.0.1:27017/short-url')
-.then(()=> console.log("mongodb connected"))
+    .then(() => console.log("mongodb connected"))
 
 app.set('view engine', "ejs")
 app.set('views', path.resolve("./views"))
@@ -22,32 +24,33 @@ app.set('views', path.resolve("./views"))
 
 //middleware 
 app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
+app.use(cors(corsOptions))
 app.use(cookieParser())
 app.use(checkAuthenticaction)
 
 //routes
-app.use('/url', restrictTo(["NORMAL"]), urlRoute)
+app.use('/url', urlRoute)
 app.use('/', staticRoute)
 app.use('/user', userRoute)
 
-app.get('/url/:shortId', async (req, res)=>{
-        const shortId = req.params.shortId
-        const entry = await URL.findOneAndUpdate(
-    {
-        shortId
-    },
-    {
-        $push:{
-            visitHistory:{
-                timestamp:  Date.now()
-            },
-        }
-    })
+app.get('/url/:shortId', async (req, res) => {
+    const shortId = req.params.shortId
+    const entry = await URL.findOneAndUpdate(
+        {
+            shortId
+        },
+        {
+            $push: {
+                visitHistory: {
+                    timestamp: Date.now()
+                },
+            }
+        })
 
     res.redirect(entry.redirectUrl)
 })
 
-app.listen(PORT, ()=> {
+app.listen(PORT, () => {
     console.log(`Server started at PORT: ${PORT}`)
 })

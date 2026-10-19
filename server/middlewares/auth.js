@@ -1,7 +1,7 @@
-const {getUser} = require('../service/auth')
+const { getUser } = require('../service/auth')
 
 
-function checkAuthenticaction(req, res, next){
+function checkAuthenticaction(req, res, next) {
     const authorizationHeader = req.headers['authorization']
     req.user = null
 
@@ -12,6 +12,7 @@ function checkAuthenticaction(req, res, next){
         return next();
 
     const token = authorizationHeader.split('Bearer ')[1]
+
     const user = getUser(token);
 
     req.user = user;
@@ -19,8 +20,8 @@ function checkAuthenticaction(req, res, next){
 
 }
 
-function restrictTo(roles = []){
-    return function(req, res, next){
+function restrictTo(roles = []) {
+    return function (req, res, next) {
         if (!req.user) return res.redirect("/login");
 
         if (!roles.includes(req.user.role)) return res.end('UnAuthorized');
@@ -34,7 +35,7 @@ function restrictTo(roles = []){
 //     const token = req.headers['authorization']
 //     const userid = token.split('Bearer ')[1]
 //     if (!userid) return res.redirect('/login')
-    
+
 //     const user = getUser(userid)
 //     if (!user) return res.redirect('/login')
 
